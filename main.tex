@@ -1,0 +1,136 @@
+% PVK resources: https://polybox.ethz.ch/index.php/s/FQI5tkf1kabHnhB
+% PW: SD2022
+%
+%
+\documentclass[a4paper,10pt,landscape]{scrartcl}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{tabularx}
+\usepackage[table]{xcolor}
+% \usepackage{svg}
+% \usepackage{svg-extract}
+% \svgsetup{clean=true}
+\usepackage{scrlfile}
+\PreventPackageFromLoading{svg}
+
+
+% for a more readable preamble
+\input{headers/standard_header}
+\input{headers/layout_formating}
+\input{headers/code_header}
+\input{headers/math_header}
+% -------------------------------------------
+\title{PSA Summary}
+\subtitle{HS24 ETH Zurich}
+\author{Carl von Holly-P.}
+% \date{\today}
+%
+\begin{document}
+\begin{multicols*}{3}
+%
+\maketitle
+\section{Basics}
+resistance and reactance:
+$z=r+jx=\frac{1}{y} = \frac{1}{g + jb}$ \\
+conductance and susceptance:
+$g=\frac{r}{r^2 + x^2}$ \\
+$b=\frac{x}{r^2 + x^2}$ \\
+per unit: $r=r^{pu}\cdot r_{base}\quad\left[\mathrm{p.u.}\right]\cdot\left[\mathrm{\frac{\Omega}{p.u.}}\right]$
+\section{Components}
+\subsection{Transmission line}
+$\underline{I}_{k m}=\left(a_{k m}^2 \underline{E}_k-t_{k m}^* t_{m k} \underline{E}_m\right) y_{k m}+y_{k m}^{S h} a_{k m}^2 \underline{E}_k$
+
+\subsection{Phase shifting transformers}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{src/image.png}
+\end{figure}
+$\binom{\underline{I}_{k m}}{\underline{I}_{m k}}=\left(\begin{array}{cc}a_{k m}^2 y_{k m} & -t_{k m}^* y_{k m} \\ -t_{k m} y_{k m} & y_{k m}\end{array}\right)\binom{\underline{E}_k}{\underline{E}_m}$ \\
+$\begin{aligned} P_{k m} & =a_{k m}^2 U_k^2 g_{k m}-a_{k m} U_k U_m g_{k m} \cos \left(\theta_{k m}+\varphi_{k m}\right) \\ & -a_{k m} U_k U_m b_{k m} \sin \left(\theta_{k m}+\varphi_{k m}\right)\end{aligned}$
+$\begin{aligned} Q_{k m} & =-a_{k m}^2 U_k^2 b_{k m}+a_{k m} U_k U_m b_{k m} \cos \left(\theta_{k m}+\varphi_{k m}\right) \\ & -a_{k m} U_k U_m g_{k m} \sin \left(\theta_{k m}+\varphi_{k m}\right)\end{aligned}$ \\
+where $\theta_{km}=\theta_k-\theta_m$ the voltage angle difference, $t_{km}=a_{km}e^{j\varphi_{km}}$ the transformer model, $\varphi_{km}$ the phase shift.
+
+
+\subsection{Unified Branch Model}
+idea: combine all devices in one model. \\
+Transmission line: $a_{km}=a_{mk}=1$, $\varphi_{km}=\varphi_{mk}=0$. \\
+Transformers: $y^{sh}_{km}=y^{sh}_{mk}=0$, $a_{mk}=1$, $\varphi_{mk}=0$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{src/ubm.png}
+\end{figure}
+$\binom{\underline{I}_{k m}}{\underline{I}_{m k}}=\left(\begin{array}{cc}a_{k m}^2\left(y_{k m}+y_{k m}^{s h}\right) & -t_{k m}^* t_{m k} y_{k m} \\ -t_{m k}^* t_{k m} y_{k m} & a_{m k}^2\left(y_{k m}+y_{k m}^{s h}\right)\end{array}\right)\binom{\underline{E}_k}{\underline{E}_m}$ \\
+$\begin{aligned} P_{k m} & =\left(a_{k m} U_k\right)^2 g_{k m} \\ & -\left(a_{k m} U_k\right)\left(a_{m k} U_m\right) g_{k m} \cos \left(\theta_{k m}+\varphi_{k m}-\varphi_{m k}\right) \\ & -\left(a_{k m} U_k\right)\left(a_{m k} U_m\right) b_{k m} \sin \left(\theta_{k m}+\varphi_{k m}-\varphi_{m k}\right)\end{aligned}$ \\
+$\begin{aligned} Q_{k m} & =-\left(a_{k m} U_k\right)^2\left(b_{k m}+b_{k m}^{s h}\right) \\ & +\left(a_{k m} U_k\right)\left(a_{m k} U_m\right) b_{k m} \cos \left(\theta_{k m}+\varphi_{k m}-\varphi_{m k}\right) \\ & -\left(a_{k m} U_k\right)\left(a_{m k} U_m\right) g_{k m} \sin \left(\theta_{k m}+\varphi_{k m}-\varphi_{m k}\right)\end{aligned}$
+
+
+\subsection{shunt elements}
+$I_k^{sh}=-y_k^{sh}E_k$ (meaning positive current for current \textit{into} bus $k$)
+
+\subsection{loads}
+Assume load active \& reactive power is constant.
+\subsection{generators}
+\subsubsection{capability curve}
+$S_g=P_g + jQ_g$ is limited
+\begin{itemize}
+    \item in $P_{g,max}$ by stator current heating limit (max. losses in armature $R_t|I_t|^2$
+    \item in $Q_{g,max}$ by field current heating limit
+    \item in $Q_{g,min}$ by stator end region heating limit (eddy currents leading to heat)
+\end{itemize}
+
+\subsection{admittance matrix}
+nodal admittance matrix: $\mathbf{Y=G+jB}\Rightarrow\mathbf{I=YE}$ \\
+with elements
+$Y_{km} = -t_{km}^*t_{mk}y_{km}$ \\
+$Y_{kk} = y_k^{sh}+\underset{m\in\Omega_k}{\sum}a_{km}^2(y_{km}^{sh} + y_{km})$ \\
+characteristics: \textit{sparse} and generally \textit{symmetric} (not in case of phase-shifting-trafo)
+
+\section{Power Flow Computation}
+\subsection{Bus Types}
+variables: $P_k,Q_k,U_k,\theta_k$ (redundancy: 2 variables)
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{c|c|c|c|c}
+         Bus type&  a.k.a.& known's & equal. constr. & \\ \hline
+         slack&  & $U_k,\theta_k=0$ & $U=$ const. & \\
+         PQ&  load& $P_k,Q_k$ & $P,Q$ balance & \\
+         PU&  gen.& $P_k,Q_k$ & $P$ balance, $U=$ const. & \\
+    \end{tabular}
+\end{table}
+
+\subsection{DC Power Flow}
+assumptions:
+\begin{itemize}
+    \item $|U_{bus}|=1$ at all buses
+    \item small $\theta_{km}\Rightarrow \cos(\theta_{km})\approx1, \sin(\theta_{km})\approx \theta$
+    \item lossless transmission lines \& power transformers
+    \item neglect shunt elements
+\end{itemize}
+equations for tr.-line, in-phase-trafo, phase shifter:
+$$P_{km}=\frac{\theta_{km}}{x_{km}} \quad P_{km}=\frac{\theta_{km}}{x_{km}/a_{km}} \quad P_{km}=\frac{\theta_{km}+\varphi_{km}}{x_{km}}$$
+\subsubsection{DC Load Flow}
+$$P_k=P_{G_{k}}-P_{L_{k}} = \underset{m\in\Omega_k}{\sum}\frac{\theta_k-\theta_m}{x_{km}}=B_{kk}'\theta_k + \underset{m\in\Omega_k}{\sum}B_{km}'\theta_m$$
+$$\Rightarrow \mathbf{P=B'\theta}$$
+Row $i$ may have to be deleted as $\theta_i=0$ is slack/reference bus. \\
+With $\mathbf{P}$ vector of net injections, $\mathbf{B'}$ nodal admittance matrix. If there are phase shifting transformers: $\mathbf{P=B'\theta-P_{pst}}$
+
+\subsection{Gauss(-Seidel) approach}
+
+
+
+
+
+
+
+\section{Fault analysis}
+Why do we care? Scale circuit breakers to correct size.
+
+\subsection{Superposition technique}
+
+
+\end{multicols*}
+\end{document}
